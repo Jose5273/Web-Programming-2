@@ -140,7 +140,7 @@ public class AppE2ETest {
         screenshot("02-book-view-modal");
     }
 
-    @Test
+        @Test
     @Order(3)
     void searchBarFiltersBooks() {
         page.navigate(baseUrl() + "/");
@@ -149,12 +149,28 @@ public class AppE2ETest {
         int originalCount = page.locator(".prestamo-card").count();
         assertTrue(originalCount > 0, "Need at least one book to test search");
 
-        page.locator("#searchInput").fill("tesoro");
+        // Read the first card's title and use the first 10 chars as the search
+        // term. This guarantees at least one card remains visible, regardless
+        // of which random books the home page happens to show.
+        String firstTitle = page.locator(".book-item .card-title").first().textContent();
+        assertNotNull(firstTitle, "First card should have a title");
+        assertFalse(firstTitle.isBlank(), "First card title should not be blank");
 
+        String searchTerm = firstTitle.substring(0, Math.min(10, firstTitle.length())).trim();
+        assertTrue(searchTerm.length() >= 3,
+                "Search term should be at least 3 chars (got: '" + searchTerm + "')");
+
+        page.locator("#searchInput").fill(searchTerm);
         page.waitForTimeout(600);
+
         int visibleCount = page.locator(".book-item:not([style*='display: none'])").count();
-        assertTrue(visibleCount > 0 && visibleCount <= originalCount,
-                "Search should filter the grid (was " + originalCount + ", now " + visibleCount + ")");
+
+        assertTrue(visibleCount > 0,
+                "Search for '" + searchTerm + "' should match at least the first book"
+                        + " (was " + originalCount + ", now " + visibleCount + ")");
+        assertTrue(visibleCount <= originalCount,
+                "Search should not increase the count"
+                        + " (was " + originalCount + ", now " + visibleCount + ")");
 
         screenshot("03-search-filtered");
     }
