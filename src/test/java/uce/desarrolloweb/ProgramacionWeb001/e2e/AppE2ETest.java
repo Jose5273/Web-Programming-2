@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * End-to-end tests that drive the real app in a real browser.
@@ -140,7 +140,7 @@ public class AppE2ETest {
         screenshot("02-book-view-modal");
     }
 
-        @Test
+    @Test
     @Order(3)
     void searchBarFiltersBooks() {
         page.navigate(baseUrl() + "/");
@@ -344,7 +344,7 @@ public class AppE2ETest {
 
         // Immediately after typing: no dropdown yet (4-second delay)
         assertThat(page.locator("#suggestions")).not().hasClass(
-        java.util.regex.Pattern.compile(".*open.*"));
+                java.util.regex.Pattern.compile(".*open.*"));
 
         // Wait 4+ seconds for the debounce to fire
         page.waitForTimeout(4500);
