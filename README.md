@@ -1,6 +1,6 @@
-The program utilizes a mvc structure, uses Java 17 and it needs an encoding UTF-8 otherwise some characters may show in stranger ways, It's made with the data base postgressql.
+The program utilizes an MVC structure, uses Java 17, and requires UTF-8 encoding; otherwise, some characters may appear in strange ways. It is built with the PostgreSQL database.
 
-The program is divided by the structure:
+The program is divided into the following structure:
 
 ProgramacionWeb001/
 ├── .github/workflows/playwright-demo.yml       ← CI/CD workflow
@@ -28,57 +28,77 @@ ProgramacionWeb001/
 └── src/test/java/uce/desarrolloweb/ProgramacionWeb001/e2e/
     └── AppE2ETest.java                         ← 11 Playwright tests
 
-The dependencys of this project were made using springInitializer, with Thymeleaf, Spring JPA for persist data in sql, Spring web for build web and PostgresSQL Driver for the conncetion between the project and the data base PostgresSQL. 
-Three other dependencies were installed, h2 for In-memory DB for dev, playwright for E2E browser automation and exec-maven-plugin to install Chromium binaries.
+The dependencies for this project were added using Spring Initializer, with Thymeleaf, Spring JPA for persisting data in SQL, Spring Web for building web applications, and the PostgreSQL Driver for the connection between the project and the PostgreSQL database. Three other dependencies were installed: H2 for an in-memory DB for development, Playwright for E2E browser automation, and exec-maven-plugin to install Chromium binaries.
 
-The application.properties file in base coding is used for thymeleaf, encoding, loggin and the two profiles; prod for PostgresSQL and dev for H2 in-memory.
+The application.properties file in the base code is used for Thymeleaf, encoding, logging, and the two profiles: prod for PostgreSQL and dev for H2 in-memory.
 
-The application-dev.properties file is used to not depend on external servers like Postgres, is used for the demo versio, so everyone that clones the repo gets an H2 database created fresh on every startup.
+The application-dev.properties file is used so the project does not depend on external servers like PostgreSQL. It is used for the demo version, so everyone who clones the repo gets an H2 database created fresh on every startup.
 
-The application-prod.properties file is used for the consiguration on PostgresSQL.
+The application-prod.properties file is used for the configuration of PostgreSQL.
 
-The project has a data.sql file with 86 books from another project, 6 of this books are randomly choosen so they can appera on screen everytime it runs.
+The project has a data.sql file with 86 books from another project. Six of these books are randomly chosen so they can appear on screen every time it runs.
 
-In package Model, the main Entity is Libro, that has titulo, author, editorial, anioPublicacion and categoria  as String and disponible as Boolean.
+In the Model package, the main entity is Libro, which has titulo, author, editorial, anioPublicacion, and categoria as Strings and disponible as a Boolean.
 
-In the package Repository is used to find Libro and filter the searchs by titulo and categoria.
+The Repository package is used to find Libro and filter searches by titulo and categoria.
 
-In the package Service ther is the business logic like cteate, modify, list, delete, the ones coneccted with API return JSON not html
+In the Service package, there is the business logic such as create, modify, list, and delete. The ones connected with the API return JSON, not HTML.
 
-In the package controller ther are two files, LibroController and PokemonController, this two are the bridge bettween service and the tempaltes, it orders how to show the page.
+In the Controller package, there are two files: LibroController and PokemonController. These two are the bridge between the service and the templates; they define how to display the page.
 
-Now, in templates, there are two html, first, we concentrate onto index.html
-Index Feature:
-- Real-time Search: searchInput.addEventListener('input', ...)
-- Autocomplete dropdown .suggestions div + renderSuggestions()
-- View Modal: Fetch by id openViewModal(id)
-- Edit Modal: openEditModal(id)
+Now, in the templates, there are two HTML files. First, let's concentrate on index.html.
 
-Pokemon Feature:
-- 4-second search delay: const SEARCH_DELAY_MS = 4000;
-- 3 endpoint choices: document.querySelectorAll('.picker-choice').forEach(btn =>
+Index Features:
+
+Real-time Search: searchInput.addEventListener('input', ...)
+
+Autocomplete dropdown .suggestions div + renderSuggestions()
+
+View Modal: Fetch by id openViewModal(id)
+
+Edit Modal: openEditModal(id)
+
+Pokemon Features:
+
+4-second search delay: const SEARCH_DELAY_MS = 4000;
+
+3 endpoint choices: document.querySelectorAll('.picker-choice').forEach(btn =>
 
 How the debounce works:
-1. User types p → timer starts (4s)
-2. User types i at t=1s → cancel old timer, start new 4s
-3. User types k at t=2s → cancel, restart 4s
-4. User stops at t=3s → timer fires at t=7s → dropdown appears
+
+User types p → timer starts (4s)
+
+User types i at t=1s → cancel old timer, start new 4s
+
+User types k at t=2s → cancel, restart 4s
+
+User stops at t=3s → timer fires at t=7s → dropdown appears
 
 In AppE2ETest: void searchDelayShowsSuggestions()
 
 Pokemon API:
-- Base URL: https://pokeapi.co/api/v2
-- Auth: none (public API)
-- Format: JSON over HTTPS
-- Endpoints:
-    - /pokemon-species/{name}    (user picks "Species" from picker)
-    - /evolution-chain/{id}      (user picks "Evolution" from picker)
-    - /pokemon/{name}            (user picks "Stats" from picker OR browsing grid)
+
+Base URL: https://pokeapi.co/api/v2
+
+Auth: none (public API)
+
+Format: JSON over HTTPS
+
+Endpoints:
+
+/pokemon-species/{name} (user picks "Species" from picker)
+
+/evolution-chain/{id} (user picks "Evolution" from picker)
+
+/pokemon/{name} (user picks "Stats" from picker OR browsing grid)
 
 Playwright:
-- Test class: AppE2ETest.java
-- Method count: 11 tests
-- Runtime: ~70 seconds total
+
+Test class: AppE2ETest.java
+
+Method count: 11 tests
+
+Runtime: ~70 seconds total
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)   ← Starts app on random port
 @ActiveProfiles("dev")                          ← Uses H2
@@ -111,43 +131,46 @@ Playwright:
 
 @AfterAll closeBrowser() { /* cleanup */ }
 
-
-#	Test	                                      What it clicks	                              Proves
-1	homePageLoadsAndShowsBooks	                Loads /	                                      H2 DB works, Thymeleaf renders
-2	bookCardViewModalOpens	                    View button	                                  REST /api/libros/{id} works
-3	searchBarFiltersBooks	                      Types in search	                              Client-side filter works (robust version)
-4	navigateToPokemonPage	                      Pokémon nav link	                            Routing works
-5	pokemonPickerOpensOnCardClick	              Clicks a card	                                Picker modal appears
-6	speciesEndpointOpensItsOwnModal	            Picks Species	                                /pokemon-species/{name} renders
-7	evolutionEndpointOpensItsOwnModal	          Picks Evolution	                              /evolution-chain/{id} + parsing
-8	statsEndpointOpensItsOwnModal	              Picks Stats	                                  /pokemon/{name} renders
-9	backToPickerFromEndpoint	                  "Back to options"	                             Modal transitions work
-10	evolutionStageClickOpensNewPicker	        Click Ivysaur in chain	                       Re-modal works for related Pokémon
-11	searchDelayShowsSuggestions	              Types "pikachu", waits 4s	                     THE 4-SECOND DELAY TEST
-
+#	Test	                                        What it clicks	                                                    Proves
+1	homePageLoadsAndShowsBooks	                    Loads /	                                                            H2 DB works, Thymeleaf renders
+2	bookCardViewModalOpens	                        View button	                                                        REST /api/libros/{id} works
+3	searchBarFiltersBooks	                        Types in search	                                                    Client-side filter works (robust version)
+4	navigateToPokemonPage	                        Pokémon nav link	                                                Routing works
+5	pokemonPickerOpensOnCardClick	                Clicks a card	                                                    Picker modal appears
+6	speciesEndpointOpensItsOwnModal	                Picks Species	                                                    /pokemon-species/{name} renders
+7	evolutionEndpointOpensItsOwnModal	            Picks Evolution	                                                    /evolution-chain/{id} + parsing
+8	statsEndpointOpensItsOwnModal	                Picks Stats	                                                        /pokemon/{name} renders
+9	backToPickerFromEndpoint	                    "Back to options"	                                                Modal transitions work
+10	evolutionStageClickOpensNewPicker	            Click Ivysaur in chain	                                            Re-modal works for related Pokémon
+11	searchDelayShowsSuggestions	                    Types "pikachu", waits 4s	                                        THE 4-SECOND DELAY TEST
 
 What happens:
-- Playwright launches Chromium (headless)
-- For each test, @BeforeEach opens a browser context with video recording ON
-- Test drives the page (click, type, navigate)
-- @AfterEach closes context → .webm file saved to target/videos/
-- Result: 11 .webm files (~3–8 MB total), each 10–25 seconds
 
+Playwright launches Chromium (headless).
 
-Quick reference — where to find each feature
-Feature						                    File								                        How to find it
-4-second delay constant				        pokemon.html							                  Search for SEARCH_DELAY_MS = 4000
-4-second delay usage				          pokemon.html							                  Search for setTimeout(() => { renderSuggestions
-4-second delay test				            AppE2ETest.java	Method 						          searchDelayShowsSuggestions()
-Real-time search (no delay)			      index.html							                    searchInput.addEventListener('input', ...)
-PokéAPI base URL				              pokemon.html							                  Search for API_BASE
-Species endpoint call				          pokemon.html							                  Search for pokemon-species/
-Evolution endpoint call				        pokemon.html							                  Search for evolution-chain
-Pokemon endpoint call				          pokemon.html							                  Search for pokemon/
-H2 config					                    application-dev.properties					        Whole file
-Auto-load SQL					                application-dev.properties					        spring.sql.init.mode=always
-Random shuffle					              LibroService.java						                Collections.shuffle(all)
-REST endpoints					              LibroController.java						            Methods starting with api*
-Video recording setup				          AppE2ETest.java							                setRecordVideoDir
-Video upload to CI				            .github/workflows/playwright-demo.yml				actions/upload-artifact@v4
-Chromium install				              .github/workflows/playwright-demo.yml				install --with-deps chromium
+For each test, @BeforeEach opens a browser context with video recording ON.
+
+The test drives the page (click, type, navigate).
+
+@AfterEach closes the context → .webm file saved to target/videos/.
+
+Result: 11 .webm files (~3–8 MB total), each 10–25 seconds.
+
+Quick reference — where to find each feature:
+
+Feature	                                                            File	                                                    How to find it
+4-second delay constant	                                            pokemon.html	                                            Search for SEARCH_DELAY_MS = 4000
+4-second delay usage	                                            pokemon.html	                                            Search for setTimeout(() => { renderSuggestions
+4-second delay test	                                                AppE2ETest.java Method	                                    searchDelayShowsSuggestions()
+Real-time search (no delay)	                                        index.html	                                                searchInput.addEventListener('input', ...)
+PokéAPI base URL	                                                pokemon.html	                                            Search for API_BASE
+Species endpoint call	                                            pokemon.html	                                            Search for pokemon-species/
+Evolution endpoint call	                                            pokemon.html	                                            Search for evolution-chain
+Pokemon endpoint call	                                            pokemon.html	                                            Search for pokemon/
+H2 config	                                                        application-dev.properties	                                Whole file
+Auto-load SQL	                                                    application-dev.properties	                                spring.sql.init.mode=always
+Random shuffle	                                                    LibroService.java	                                        Collections.shuffle(all)
+REST endpoints	                                                    LibroController.java	                                    Methods starting with api*
+Video recording setup	                                            AppE2ETest.java	                                            setRecordVideoDir
+Video upload to CI	                                                .github/workflows/playwright-demo.yml	                    actions/upload-artifact@v4
+Chromium install	                                                .github/workflows/playwright-demo.yml	                    install --with-deps chromium
