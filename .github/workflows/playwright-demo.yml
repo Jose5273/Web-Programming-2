@@ -58,3 +58,46 @@ jobs:
             
             docker-compose -f docker-compose-test.yml down
             docker-compose -f docker-compose-test.yml up -d --build
+          name: playwright-screenshots
+          path: target/screenshots/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+          retention-days: 30
+          if-no-files-found: warn
+
+
+  # ==========================================
+  # JOB 2: Integración con Jira (Solo en PRs)
+  # ==========================================
+  jira-integration:
+    name: Create Jira Ticket
+    needs: test-and-deploy
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Jira
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Create Jira issue
+        uses: atlassian/gajira-create@v3
+        with:
+          project: 'WEB' # <--- Reemplaza 'WEB' por la clave real de tu proyecto
+          issuetype: 'Task'
+          summary: 'PR: ${{ github.event.pull_request.title }}'
+          description: |
+            Se ha abierto un nuevo Pull Request.
+            
+            *Enlace al PR:* ${{ github.event.pull_request.html_url }}
+            *Autor:* ${{ github.event.pull_request.user.login }}
+            *Rama:* ${{ github.head_ref }} -> ${{ github.base_ref }}
