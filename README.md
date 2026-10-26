@@ -174,3 +174,20 @@ REST endpoints	                                                    LibroControll
 Video recording setup	                                            AppE2ETest.java	                                            setRecordVideoDir
 Video upload to CI	                                                .github/workflows/playwright-demo.yml	                    actions/upload-artifact@v4
 Chromium install	                                                .github/workflows/playwright-demo.yml	                    install --with-deps chromium
+
+
+It has been aumented an AWS connection, in case it fails, here are some commands that can resolve the problem in the AWS console
+# 1. Connect
+ssh -i llave.pem ec2-user@IP_PUBLICA
+
+# 2. Go to the project
+cd /home/ec2-user/Web-Programming-2
+
+# 3. Reload Code
+git pull origin test
+
+# 4. Get everything up
+docker compose -f docker-compose-test.yml up -d --build
+
+# 5. Verify
+docker ps
