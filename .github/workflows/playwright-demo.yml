@@ -79,7 +79,7 @@ jobs:
       - name: Create Jira issue
         uses: atlassian/gajira-create@v3
         with:
-          project: 'WEB' # <--- Reemplaza 'WEB' por la clave real de tu proyecto
+          project: 'Web Programming'
           issuetype: 'Task'
           summary: 'PR: ${{ github.event.pull_request.title }}'
           description: |
