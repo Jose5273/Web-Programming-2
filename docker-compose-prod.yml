@@ -1,0 +1,15 @@
+services:
+  version: '3.8'
+  services:
+    app-prod:
+      build: .
+      container_name: spring_app_prod
+      ports:
+        - "80:8080" # Expuesto en el puerto 80
+      environment:
+        - SPRING_PROFILES_ACTIVE=prod
+        - DB_HOST=tu-endpoint-de-rds.aws.com # Cámbialo si usas RDS o déjalo como localhost si usas otro contenedor
+        - DB_PORT=5432
+        - DB_NAME=programacionweb_prod
+        - DB_USER=postgres
+        - DB_PASSWORD=ProdPasswordSuperSegura!
