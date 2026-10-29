@@ -28,6 +28,11 @@ jobs:
             -Dexec.args="install --with-deps chromium" \
             -Dexec.classpathScope=test
 
+      - name: Install Playwright OS dependencies
+        run: |
+          sudo mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps"
+
+      
       - name: Run E2E tests
         run: mvn -B test -Dtest=AppE2ETest
 
