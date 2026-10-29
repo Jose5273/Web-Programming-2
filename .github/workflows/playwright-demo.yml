@@ -28,9 +28,13 @@ jobs:
             -Dexec.args="install --with-deps chromium" \
             -Dexec.classpathScope=test
 
+      # --- PASO CORREGIDO ---
       - name: Install Playwright OS dependencies
         run: |
-          sudo mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps"
+          sudo mvn exec:java -e \
+            -Dexec.mainClass=com.microsoft.playwright.CLI \
+            -Dexec.args="install-deps" \
+            -Dexec.classpathScope=test
 
       - name: Run E2E tests
         run: mvn -B test -Dtest=AppE2ETest
@@ -43,7 +47,7 @@ jobs:
           path: target/videos/
           retention-days: 30
 
-      
+      # --- DESPLIEGUE A AWS (Solo en push a la rama test) ---
       - name: Deploy to AWS EC2
         if: github.event_name == 'push' && github.ref == 'refs/heads/test'
         uses: appleboy/ssh-action@v1.0.0
