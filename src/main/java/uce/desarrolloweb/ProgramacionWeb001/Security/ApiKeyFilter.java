@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class ApiKeyFilter extends OncePerRequestFilter {
 
-    // Definimos la clave secreta
+    // Definimos la clave
     private static final String API_KEY = "MiClaveSuperSecreta123";
     private static final String API_KEY_HEADER = "X-API-KEY";
 
@@ -23,7 +23,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
         // Si la clave no coincide, bloqueamos la petición
         if (API_KEY.equals(requestApiKey)) {
-            // La clave es correcta, dejamos que la petición siga su curso
+            // La clave es correcta
             filterChain.doFilter(request, response);
         } else {
             // La clave es incorrecta o no existe
