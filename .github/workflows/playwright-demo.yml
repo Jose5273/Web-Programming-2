@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -32,7 +32,6 @@ jobs:
         run: |
           sudo mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install-deps"
 
-      
       - name: Run E2E tests
         run: mvn -B test -Dtest=AppE2ETest
 
@@ -44,7 +43,7 @@ jobs:
           path: target/videos/
           retention-days: 30
 
-      # --- DESPLIEGUE A AWS (Solo en push a la rama test) ---
+      
       - name: Deploy to AWS EC2
         if: github.event_name == 'push' && github.ref == 'refs/heads/test'
         uses: appleboy/ssh-action@v1.0.0
@@ -60,36 +59,5 @@ jobs:
             git fetch origin
             git checkout test
             git pull origin test
-            
-            docker-compose -f docker-compose-test.yml down
-            docker-compose -f docker-compose-test.yml up -d --build
-            
-
-  # ==========================================
-  # JOB 2: Integración con Jira (Solo en PRs)
-  # ==========================================
-  jira-integration:
-    name: Create Jira Ticket
-    needs: test-and-deploy
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to Jira
-        uses: atlassian/gajira-login@v3
-        env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-
-      - name: Create Jira issue
-        uses: atlassian/gajira-create@v3
-        with:
-          project: 'Web Programming'
-          issuetype: 'Task'
-          summary: 'PR: ${{ github.event.pull_request.title }}'
-          description: |
-            Se ha abierto un nuevo Pull Request.
-            
-            *Enlace al PR:* ${{ github.event.pull_request.html_url }}
-            *Autor:* ${{ github.event.pull_request.user.login }}
-            *Rama:* ${{ github.head_ref }} -> ${{ github.base_ref }}
+            docker compose -f docker-compose-test.yml down
+            docker compose -f docker-compose-test.yml up -d --build
