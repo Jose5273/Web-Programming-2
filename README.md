@@ -174,3 +174,14 @@ REST endpoints	                                                    LibroControll
 Video recording setup	                                            AppE2ETest.java	                                            setRecordVideoDir
 Video upload to CI	                                                .github/workflows/playwright-demo.yml	                    actions/upload-artifact@v4
 Chromium install	                                                .github/workflows/playwright-demo.yml	                    install --with-deps chromium
+
+
+New Features:
+- pom.xml: the dependency spring-boot-starter-security has been added this is the engine that allows us to intercept HTTP requests before they reach the controllers (which serve the HTML or JSON).
+- ApiKeyFilter.java: src/main/java/uce/desarrolloweb/ProgramacionWeb001/Security/ It checks every incoming request for the X-API-KEY header. If the key is correct (MiClaveSuperSecreta123), it lets the request pass through. If the key is missing or incorrect, it returns a 401 Unauthorized JSON response and cuts the connection.
+- SecurityConfig.java: src/main/java/uce/desarrolloweb/ProgramacionWeb001/Security/ It tells Spring Security two things: That all routes (anyRequest) require authentication. To use the custom filter (ApiKeyFilter) before any other default filter.
+- DevSecurityConfig.java: src/main/java/uce/desarrolloweb/ProgramacionWeb001/Security/ This is the security configuration exclusively for the dev profile. It allows access to everything (permitAll) without asking for an API Key. This is what allowed the 11 Playwright tests to pass green again.
+- Dockerfile: It tells Docker how to build the image for the Spring Boot application.
+- docker-compose-test.yml: It defines and connects all the services needed to run the app in a testing or staging environment.
+- docker-compose-prod.yml: It defines and connects all the services needed to run the app in a real, live environment.
+- .github/workflows/playwright-demo.yml: It tests the code and, if successful, deploys it to the AWS EC2 instance.
