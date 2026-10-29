@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class ApiKeyFilter extends OncePerRequestFilter {
 
-    // Definimos la clave secreta (en un proyecto real esto va en variables de entorno)
+    // Definimos la clave secreta
     private static final String API_KEY = "MiClaveSuperSecreta123";
     private static final String API_KEY_HEADER = "X-API-KEY";
 

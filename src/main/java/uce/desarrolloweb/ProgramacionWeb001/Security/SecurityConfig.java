@@ -14,13 +14,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Desactivamos CSRF porque es una API REST (si usas formularios, quizás quieras dejarlo)
+
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Aquí le decimos que TODAS las rutas requieren autenticación
+
                         .anyRequest().authenticated()
                 )
-                // Agregamos nuestro filtro personalizado antes del filtro por defecto de Spring
+
                 .addFilterBefore(new ApiKeyFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

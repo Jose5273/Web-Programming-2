@@ -48,7 +48,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- ✅ NEW: H2 in-memory database (for the dev profile) -->
+        <!-- NEW: H2 in-memory database (for the dev profile) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
